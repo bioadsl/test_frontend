@@ -18,6 +18,10 @@ def driver():
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-infobars")
 
+    chrome_path = os.environ.get("CHROME_PATH")
+    if chrome_path:
+        options.binary_location = chrome_path
+
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(0)
