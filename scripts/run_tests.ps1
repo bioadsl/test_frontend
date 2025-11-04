@@ -1,7 +1,8 @@
 param(
     [string]$Marker,
     [string]$JUnitXml,
-    [string]$ExtraPytestArgs
+    [string]$ExtraPytestArgs,
+    [switch]$Headed
 )
 
 $ErrorActionPreference = 'Stop'
@@ -35,7 +36,7 @@ function Install-Dependencies {
 }
 
 function Run-Tests {
-    param([string]$VenvPath, [string]$Root, [string]$Marker, [string]$JUnitXml, [string]$ExtraPytestArgs)
+    param([string]$VenvPath, [string]$Root, [string]$Marker, [string]$JUnitXml, [string]$ExtraPytestArgs, [bool]$Headed)
     $pythonExe = Join-Path $VenvPath 'Scripts\python.exe'
     $pytestArgs = @()
 
@@ -48,6 +49,7 @@ function Run-Tests {
     }
 
     if ($ExtraPytestArgs) { $pytestArgs += ($ExtraPytestArgs -split '\s+') }
+    if ($Headed) { $pytestArgs += '--headed' }
 
     $pytestArgs += '-q'
 
@@ -60,7 +62,7 @@ try {
     Ensure-Python
     $venvPath = Ensure-Venv -Root $Root
     Install-Dependencies -VenvPath $venvPath -Root $Root
-    Run-Tests -VenvPath $venvPath -Root $Root -Marker $Marker -JUnitXml $JUnitXml -ExtraPytestArgs $ExtraPytestArgs
+    Run-Tests -VenvPath $venvPath -Root $Root -Marker $Marker -JUnitXml $JUnitXml -ExtraPytestArgs $ExtraPytestArgs -Headed $Headed.IsPresent
 }
 catch {
     Write-Error $_

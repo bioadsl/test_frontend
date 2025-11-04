@@ -76,7 +76,10 @@ chmod +x ./scripts/run_tests.sh
   - Unix/macOS: `./scripts/run_tests.sh --extra-args "-k practice -x"`
 
 Observações:
-- O teste usa Chrome em modo headless por padrão.
+- O teste usa Chrome em modo headless por padrão. Para apresentações ao vivo, rode em modo "headed" (navegador visível):
+  - Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\run_tests.ps1 -Marker e2e -Headed`
+  - Unix/macOS: `./scripts/run_tests.sh --marker e2e --headed`
+  - Diretamente via pytest: `.\.venv\Scripts\python -m pytest -m e2e --headed -q`
 - O teste gera uma imagem .jpg temporária para upload sem depender de arquivos externos.
 
 ## Integração Contínua

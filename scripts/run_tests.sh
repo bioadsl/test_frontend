@@ -4,6 +4,7 @@ set -euo pipefail
 MARKER=""
 JUNITXML=""
 EXTRA_ARGS=""
+HEADED=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -13,6 +14,8 @@ while [[ $# -gt 0 ]]; do
       JUNITXML="$2"; shift 2;;
     --extra-args)
       EXTRA_ARGS="$2"; shift 2;;
+    --headed)
+      HEADED=true; shift 1;;
     --help|-h)
       echo "Uso: $0 [--marker e2e] [--junitxml reports/junit.xml] [--extra-args \"-k expr -x\"]";
       exit 0;;
@@ -54,6 +57,10 @@ if [[ -n "$EXTRA_ARGS" ]]; then
   # shellcheck disable=SC2206
   EXTRA_ARR=($EXTRA_ARGS)
   ARGS+=("${EXTRA_ARR[@]}")
+fi
+
+if [[ "$HEADED" == "true" ]]; then
+  ARGS+=("--headed")
 fi
 
 echo "Executando: pytest ${ARGS[*]}"

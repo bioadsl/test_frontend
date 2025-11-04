@@ -6,11 +6,22 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--headed",
+        action="store_true",
+        default=False,
+        help="Executa com navegador visível (sem headless)",
+    )
+
+
 @pytest.fixture(scope="session")
-def driver():
+def driver(request):
     options = Options()
-    # Headless estável em Chrome 109+
-    options.add_argument("--headless=new")
+    # Headless estável em Chrome 109+ (pode ser desativado com --headed)
+    headed = request.config.getoption("--headed")
+    if not headed:
+        options.add_argument("--headless=new")
     options.add_argument("--window-size=1365,900")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
@@ -25,6 +36,12 @@ def driver():
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(0)
+
+    if headed:
+        try:
+            driver.maximize_window()
+        except Exception:
+            pass
 
     yield driver
 
