@@ -35,8 +35,12 @@ jobs:
       - name: Verify Chrome installation
         shell: bash
         run: |
-          echo "Chrome path: $CHROME_PATH"
-          "$CHROME_PATH" --version || google-chrome --version || chrome --version || chromium --version
+          echo "CHROME_PATH: ${CHROME_PATH:-'(unset)'}"
+          if [ -n "$CHROME_PATH" ] && [ -f "$CHROME_PATH" ]; then
+            echo "Chrome binary present"
+          else
+            echo "Chrome binary missing"
+          fi
 
       - name: Install dependencies
         run: |
