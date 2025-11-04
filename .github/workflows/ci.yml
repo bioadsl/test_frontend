@@ -56,8 +56,16 @@ jobs:
         with:
           name: Pytest Results (${{ runner.os }} py${{ matrix.python-version }})
           path: reports/junit.xml
-          reporter: junit
+          reporter: java-junit
           fail-on-error: false
+
+      - name: Upload Coverage XML artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ runner.os }}-py${{ matrix.python-version }}
+          path: reports/coverage.xml
+          retention-days: 14
 
       - name: Upload JUnit artifact
         if: always()
@@ -80,14 +88,6 @@ jobs:
         uses: dorny/test-reporter@v1
         with:
           name: Pytest Matrix Results (aggregated)
-          path: reports_all/**/*.xml
-          reporter: junit
+          path: reports_all/**/junit.xml
+          reporter: java-junit
           fail-on-error: false
-
-      - name: Upload Coverage XML artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-${{ runner.os }}-py${{ matrix.python-version }}
-          path: reports/coverage.xml
-          retention-days: 14
