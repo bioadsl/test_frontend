@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="19.243" timestamp="2025-11-04T11:25:48.665881-03:00" hostname="Fabricio-pc"><testcase classname="tests.test_practice_form_e2e" name="test_practice_form_submission" time="19.177" /></testsuite></testsuites>
