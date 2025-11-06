@@ -11,6 +11,15 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from datetime import datetime
+
+def _sanitize_nodeid(nodeid: str) -> str:
+    return (
+        nodeid.replace("::", "_")
+        .replace(":", "_")
+        .replace("/", "_")
+        .replace("\\", "_")
+    )
 
 
 def pytest_addoption(parser):
@@ -57,3 +66,42 @@ def driver(request):
     yield driver
 
     driver.quit()
+
+
+@pytest.fixture(scope="session")
+def screenshots_dir() -> Path:
+    d = Path(project_root, "reports", "screenshots")
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+@pytest.fixture(autouse=True)
+def _auto_screenshot_fixture(request, driver, screenshots_dir):
+    # Disponibiliza driver e pasta para hooks
+    request.node._driver = driver
+    request.node._screenshots_dir = screenshots_dir
+    yield
+    try:
+        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+        fname = f"{_sanitize_nodeid(request.node.nodeid)}_end_{ts}.png"
+        driver.save_screenshot(str(screenshots_dir / fname))
+    except Exception:
+        pass
+
+
+def pytest_runtest_makereport(item, call):
+    try:
+        report = pytest.TestReport.from_item_and_call(item, call)
+    except Exception:
+        return
+    # Captura em falha
+    if call.when == "call" and report.failed:
+        driver = getattr(item, "_driver", None)
+        screenshots_dir = getattr(item, "_screenshots_dir", None)
+        if driver and screenshots_dir:
+            try:
+                ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+                fname = f"{_sanitize_nodeid(item.nodeid)}_fail_{ts}.png"
+                driver.save_screenshot(str(screenshots_dir / fname))
+            except Exception:
+                pass

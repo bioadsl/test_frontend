@@ -84,6 +84,15 @@ chmod +x ./scripts/run_tests.sh
   - Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\run_tests.ps1 -Marker e2e -JUnitXml reports\junit.xml -HtmlReport reports\pytest.html`
   - Unix/macOS: `./scripts/run_tests.sh --marker e2e --junitxml reports/junit.xml --html reports/pytest.html`
 
+### Script completo de relatório e screenshots (Windows)
+- Para executar testes, gerar `pytest.html`, capturar screenshots e abrir automaticamente o relatório:
+  - `scripts\run_report_windows.bat` (adicione `--headed` para abrir o navegador durante o teste)
+- Saídas geradas:
+  - `reports\pytest.html`: relatório HTML padrão do pytest-html
+  - `reports\junit.xml`: JUnit XML
+  - `reports\screenshots\*.png`: screenshots automáticos por caso de teste (fim e falha)
+  - `reports\summary.html`: resumo com nome de suite/caso, status, screenshots e link para `pytest.html`
+
 Observações:
 - O teste usa Chrome em modo headless por padrão. Para apresentações ao vivo, rode em modo "headed" (navegador visível):
 - Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\run_tests.ps1 -Marker e2e -Headed`
