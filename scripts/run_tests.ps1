@@ -1,6 +1,7 @@
 param(
     [string]$Marker,
     [string]$JUnitXml,
+    [string]$HtmlReport,
     [string]$ExtraPytestArgs,
     [switch]$Headed
 )
@@ -36,7 +37,7 @@ function Install-Dependencies {
 }
 
 function Run-Tests {
-    param([string]$VenvPath, [string]$Root, [string]$Marker, [string]$JUnitXml, [string]$ExtraPytestArgs, [bool]$Headed)
+    param([string]$VenvPath, [string]$Root, [string]$Marker, [string]$JUnitXml, [string]$HtmlReport, [string]$ExtraPytestArgs, [bool]$Headed)
     $pythonExe = Join-Path $VenvPath 'Scripts\python.exe'
     $pytestArgs = @()
 
@@ -48,12 +49,20 @@ function Run-Tests {
         $pytestArgs += @('--junitxml', $JUnitXml)
     }
 
+    if ($HtmlReport) {
+        $htmlDir = Split-Path -Parent $HtmlReport
+        if ($htmlDir -and -not (Test-Path $htmlDir)) { New-Item -ItemType Directory -Path $htmlDir -Force | Out-Null }
+        $pytestArgs += @('--html', $HtmlReport, '--self-contained-html')
+    }
+
     if ($ExtraPytestArgs) { $pytestArgs += ($ExtraPytestArgs -split '\s+') }
-    if ($Headed) { $pytestArgs += '--headed' }
+    if ($Headed) { $env:PYTEST_HEADED = '1' } else { $env:PYTEST_HEADED = '' }
 
+    $testsDir = Join-Path $Root 'tests'
     $pytestArgs += '-q'
+    $pytestArgs += $testsDir
 
-    Write-Host "Executando: pytest $($pytestArgs -join ' ')" -ForegroundColor Green
+    Write-Host "Executando: pytest $($pytestArgs -join ' ') (PYTEST_HEADED=$env:PYTEST_HEADED)" -ForegroundColor Green
     & $pythonExe -m pytest @pytestArgs
 }
 
@@ -62,7 +71,7 @@ try {
     Ensure-Python
     $venvPath = Ensure-Venv -Root $Root
     Install-Dependencies -VenvPath $venvPath -Root $Root
-    Run-Tests -VenvPath $venvPath -Root $Root -Marker $Marker -JUnitXml $JUnitXml -ExtraPytestArgs $ExtraPytestArgs -Headed $Headed.IsPresent
+    Run-Tests -VenvPath $venvPath -Root $Root -Marker $Marker -JUnitXml $JUnitXml -HtmlReport $HtmlReport -ExtraPytestArgs $ExtraPytestArgs -Headed $Headed.IsPresent
 }
 catch {
     Write-Error $_

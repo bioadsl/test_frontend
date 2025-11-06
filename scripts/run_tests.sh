@@ -3,6 +3,7 @@ set -euo pipefail
 
 MARKER=""
 JUNITXML=""
+HTML=""
 EXTRA_ARGS=""
 HEADED=false
 
@@ -12,12 +13,14 @@ while [[ $# -gt 0 ]]; do
       MARKER="$2"; shift 2;;
     --junitxml)
       JUNITXML="$2"; shift 2;;
+    --html)
+      HTML="$2"; shift 2;;
     --extra-args)
       EXTRA_ARGS="$2"; shift 2;;
     --headed)
       HEADED=true; shift 1;;
     --help|-h)
-      echo "Uso: $0 [--marker e2e] [--junitxml reports/junit.xml] [--extra-args \"-k expr -x\"]";
+      echo "Uso: $0 [--marker e2e] [--junitxml reports/junit.xml] [--html reports/pytest.html] [--extra-args \"-k expr -x\"]";
       exit 0;;
     *)
       echo "Argumento desconhecido: $1"; exit 1;;
@@ -53,6 +56,11 @@ if [[ -n "$JUNITXML" ]]; then
   ARGS+=("--junitxml" "$JUNITXML")
 fi
 
+if [[ -n "$HTML" ]]; then
+  mkdir -p "$(dirname "$HTML")"
+  ARGS+=("--html" "$HTML" "--self-contained-html")
+fi
+
 if [[ -n "$EXTRA_ARGS" ]]; then
   # shellcheck disable=SC2206
   EXTRA_ARR=($EXTRA_ARGS)
@@ -60,8 +68,10 @@ if [[ -n "$EXTRA_ARGS" ]]; then
 fi
 
 if [[ "$HEADED" == "true" ]]; then
-  ARGS+=("--headed")
+  export PYTEST_HEADED=1
+else
+  export PYTEST_HEADED=
 fi
 
-echo "Executando: pytest ${ARGS[*]}"
-"$PYTHON_VENV_BIN" -m pytest "${ARGS[@]}"
+echo "Executando: pytest ${ARGS[*]} $ROOT_DIR/tests (PYTEST_HEADED=${PYTEST_HEADED:-})"
+"$PYTHON_VENV_BIN" -m pytest "${ARGS[@]}" "$ROOT_DIR/tests"

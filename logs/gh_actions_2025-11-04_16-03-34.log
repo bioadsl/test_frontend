@@ -1,0 +1,29 @@
+[04/11/2025 16:03:34,66] "Checking environment (Git, GitHub CLI)..."
+[04/11/2025 16:03:35,00] "Validating GitHub auth..."
+github.com
+  ✓ Logged in to github.com account bioadsl (GH_TOKEN)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: github_pat_11ACMDMIA0LTvAvAIWJ0dM_***********************************************************
+[04/11/2025 16:03:35,74] "Validating workflow 'ci.yml' on bioadsl/test_frontend..."
+unknown flag: --json
+
+Usage:  gh workflow view [<workflow-id> | <workflow-name> | <filename>] [flags]
+
+Flags:
+  -r, --ref string   The branch or tag name which contains the version of the workflow file you'd like to view
+  -w, --web          Open workflow in the browser
+  -y, --yaml         View the workflow yaml file
+  
+[04/11/2025 16:03:35,97] "Workflow not found by name/file. Listing available workflows..."
+E2E Tests	active	203842521
+[04/11/2025 16:03:37,18] "Using first active workflow ID:  (override default)."
+[04/11/2025 16:03:37,20] "Triggering workflow run on ref 'main'..."
+empty workflow selector
+[04/11/2025 16:03:42,79] "Status= Conclusion="
+[04/11/2025 16:03:47,75] "Status= Conclusion="
+[04/11/2025 16:03:52,66] "Status= Conclusion="
+[04/11/2025 16:03:58,77] "Status= Conclusion="
+[04/11/2025 16:04:03,74] "Status= Conclusion="
+[04/11/2025 16:04:08,70] "Status= Conclusion="
+[04/11/2025 16:04:08,72] "Timeout waiting for completion."

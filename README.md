@@ -75,11 +75,23 @@ chmod +x ./scripts/run_tests.sh
   - Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\run_tests.ps1 -ExtraPytestArgs "-k practice -x"`
   - Unix/macOS: `./scripts/run_tests.sh --extra-args "-k practice -x"`
 
+### Gerar relatório HTML (pytest-html)
+- Instale as dependências (já incluímos `pytest-html` em `requirements.txt`).
+- Gerar relatório HTML auto-contido em `reports/pytest.html`:
+  - Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\run_tests.ps1 -Marker e2e -HtmlReport reports\pytest.html`
+  - Unix/macOS: `./scripts/run_tests.sh --marker e2e --html reports/pytest.html`
+- Combinar JUnit XML + HTML (útil para CI manter o resumo e ter um relatório navegável):
+  - Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\run_tests.ps1 -Marker e2e -JUnitXml reports\junit.xml -HtmlReport reports\pytest.html`
+  - Unix/macOS: `./scripts/run_tests.sh --marker e2e --junitxml reports/junit.xml --html reports/pytest.html`
+
 Observações:
 - O teste usa Chrome em modo headless por padrão. Para apresentações ao vivo, rode em modo "headed" (navegador visível):
-  - Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\run_tests.ps1 -Marker e2e -Headed`
-  - Unix/macOS: `./scripts/run_tests.sh --marker e2e --headed`
-  - Diretamente via pytest: `.\.venv\Scripts\python -m pytest -m e2e --headed -q`
+- Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\run_tests.ps1 -Marker e2e -Headed`
+- Unix/macOS: `./scripts/run_tests.sh --marker e2e --headed`
+- Diretamente via pytest: primeiro habilite `PYTEST_HEADED`, depois execute pytest:
+  - Windows CMD: `set PYTEST_HEADED=1 && .\.venv\Scripts\python -m pytest -m e2e -q`
+  - PowerShell: `$env:PYTEST_HEADED='1'; .\.venv\Scripts\python -m pytest -m e2e -q`
+  - Unix/macOS: `PYTEST_HEADED=1 ./.venv/bin/python -m pytest -m e2e -q`
 - O teste gera uma imagem .jpg temporária para upload sem depender de arquivos externos.
 
 ## Integração Contínua
@@ -87,8 +99,41 @@ Observações:
 - Matriz atual: `ubuntu-latest`, `windows-latest`, `macos-latest` × Python `3.10` e `3.11`.
 - Badge de status: atualizado no topo deste README. Caso o repositório seja privado ou ainda não exista, o badge pode retornar `Not Found`; publique o repositório em `bioadsl/test_frontend` para ativar o status.
 
+### Disparo manual e via script (GitHub CLI)
+- Requisitos:
+  - `winget` instalado (`winget --version`)
+  - GitHub CLI (`gh`) instalado. Se não estiver no `PATH`, o script tenta localizar `gh.exe` em `C:\Program Files\GitHub CLI\` ou `%LOCALAPPDATA%\Programs\gh\bin` e ajustar o `PATH` da sessão.
+- Autenticação:
+  - Sessão atual (PowerShell): ``$env:GH_TOKEN='<SEU_TOKEN>'``
+  - Persistente (PowerShell): ``[System.Environment]::SetEnvironmentVariable('GH_TOKEN','<SEU_TOKEN>','User')``
+  - Alternativa: `gh auth login` (fluxo via navegador)
+- Permissões do token para disparo manual (`workflow_dispatch`):
+  - PAT classic: escopos `repo` e `workflow`
+  - PAT fine‑grained: repository `bioadsl/test_frontend` com `Actions: Read and write`; `Contents: Read`; `Metadata: Read` (autorize SSO se necessário)
+- Como executar o script de disparo:
+  - Padrão (aguarda conclusão): `scripts\gh_actions_run.bat --wait`
+  - Especificando branch: `scripts\gh_actions_run.bat --ref main --wait`
+  - Especificando workflow por nome/ID: `scripts\gh_actions_run.bat --workflow "E2E Tests" --wait` ou `--workflow 203842521`
+- O script faz:
+  - Checagens de ambiente (`git`, `gh`) e rede
+  - Valida autenticação (`gh auth status`)
+  - Resolve workflow automaticamente: tenta `ci.yml`; se não existir, escolhe o primeiro workflow ativo via `gh workflow list` (JSON)
+  - Dispara o run com `gh workflow run` (requer `workflow_dispatch` no YAML)
+  - Monitora até finalizar com `gh run watch --exit-status` (sem necessidade de `jq`)
+  - Gera logs em `logs\gh_actions_<timestamp>.log` e `logs\gh_actions_latest.log`
+- Alternativa sem alterar token (via `push`):
+  - `git commit --allow-empty -m "chore(ci): trigger E2E"`
+  - `git push origin main`
+  - Acompanhar: `gh run list -R bioadsl/test_frontend --workflow "E2E Tests" --limit 1 --json databaseId,url,status` e `gh run watch <run-id> -R bioadsl/test_frontend --exit-status`
+
+Observações:
+- Para disparo manual, o workflow precisa ter `on: workflow_dispatch` (já configurado em `.github/workflows/ci.yml`).
+- Em novas sessões de terminal, `gh` normalmente é reconhecido; se não, reabra o terminal.
+- No Windows PowerShell, use `;` para encadear comandos; evite `&&`.
+
 ### Relatórios e cobertura
 - JUnit XML: gerado em cada execução (`reports/junit.xml`) e publicado como artifact por job da matriz.
+- HTML (pytest-html): gerado como relatório navegável (`reports/pytest.html`) e publicado como artifact por job.
 - Resumo no Actions: publicado via `dorny/test-reporter@v1` por job e de forma agregada (job `aggregate`).
 - Cobertura: gerada com `pytest-cov` em `reports/coverage.xml` e publicada como artifact.
 
@@ -146,6 +191,7 @@ git push -u origin main
 Arquivos Criados
 
 - README.md : instruções, cobertura e versionamento.
+- scripts/gh_actions_run.bat : runner para GitHub Actions (Windows), com fallback de PATH para `gh.exe`, resolução automática de workflow, disparo com `gh workflow run` e monitoria com `gh run watch`.
 - requirements.txt : selenium>=4.12.0 , pytest>=7.4.0 , webdriver-manager>=4.0.0 .
 - .gitignore : venv e caches.
 - tests/conftest.py : configuração do Chrome headless.

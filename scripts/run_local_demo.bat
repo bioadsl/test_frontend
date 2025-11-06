@@ -17,14 +17,15 @@ if not exist "%VENV%\Scripts\python.exe" (
 
 if not exist "%ROOT%\reports" mkdir "%ROOT%\reports" >nul 2>nul
 
-set ARGS=-m e2e --headed --junitxml "%ROOT%\reports\junit.xml" -q
+set ARGS=-m e2e --junitxml "%ROOT%\reports\junit.xml" -q "%ROOT%\tests"
 
+set PYTEST_HEADED=1
 for %%A in (%*) do (
-  if /I "%%A"=="--headless" set ARGS=-m e2e --junitxml "%ROOT%\reports\junit.xml" -q
-  if /I "%%A"=="--headed" set ARGS=-m e2e --headed --junitxml "%ROOT%\reports\junit.xml" -q
+  if /I "%%A"=="--headless" set PYTEST_HEADED=
+  if /I "%%A"=="--headed" set PYTEST_HEADED=1
 )
 
-echo Executando: pytest %ARGS%
+echo Executando: pytest %ARGS% (PYTEST_HEADED=%PYTEST_HEADED%)
 "%VENV%\Scripts\python.exe" -m pytest %ARGS%
 if errorlevel 1 exit /b 1
 exit /b 0

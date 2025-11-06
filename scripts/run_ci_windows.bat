@@ -17,7 +17,7 @@ if not exist "%VENV%\Scripts\python.exe" (
 
 if not exist "%ROOT%\reports" mkdir "%ROOT%\reports" >nul 2>nul
 
-set ARGS=-m e2e --junitxml "%ROOT%\reports\junit.xml" --cov=. --cov-report=xml:"%ROOT%\reports\coverage.xml" --cov-report=term -q
+set ARGS=-m e2e --junitxml "%ROOT%\reports\junit.xml" --html "%ROOT%\reports\pytest.html" --self-contained-html --cov=. --cov-report=xml:"%ROOT%\reports\coverage.xml" --cov-report=term -q "%ROOT%\tests"
 
 echo Executando: pytest %ARGS%
 "%VENV%\Scripts\python.exe" -m pytest %ARGS%

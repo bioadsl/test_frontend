@@ -1,0 +1,23 @@
+[04/11/2025 16:12:25,18] "Checking environment (Git, GitHub CLI)..."
+[04/11/2025 16:12:25,55] "Validating GitHub auth..."
+github.com
+  ✓ Logged in to github.com account bioadsl (GH_TOKEN)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: github_pat_11ACMDMIA0LTvAvAIWJ0dM_***********************************************************
+[04/11/2025 16:12:26,26] "Validating workflow 'ci.yml' on bioadsl/test_frontend..."
+unknown flag: --json
+
+Usage:  gh workflow view [<workflow-id> | <workflow-name> | <filename>] [flags]
+
+Flags:
+  -r, --ref string   The branch or tag name which contains the version of the workflow file you'd like to view
+  -w, --web          Open workflow in the browser
+  -y, --yaml         View the workflow yaml file
+  
+[04/11/2025 16:12:26,39] "Workflow not found by name/file. Listing available workflows..."
+E2E Tests	active	203842521
+[04/11/2025 16:12:27,60] "Using first active workflow ID: 203842521 (override default)."
+[04/11/2025 16:12:27,63] "Triggering workflow run on ref 'main'..."
+could not create workflow dispatch event: HTTP 403: Resource not accessible by personal access token (https://api.github.com/repos/bioadsl/test_frontend/actions/workflows/203842521/dispatches)
+[04/11/2025 16:12:28,41] "Failed to trigger workflow run. Check credentials, permissions, and inputs."

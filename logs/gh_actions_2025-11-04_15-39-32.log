@@ -1,0 +1,5 @@
+[04/11/2025 15:39:32,85] "Checking environment (Git, GitHub CLI)..."
+[04/11/2025 15:39:33,08] ""GitHub CLI" not found. Attempting install via winget..."
+   -    \                                                                                                                            -    \                                                                                                                         Foi encontrado um pacote existente já instalado. Tentando atualizar o pacote instalado...
+Nenhuma atualização disponível foi encontrada.
+Nenhuma versão de pacote mais recente está disponível nas origens configuradas.

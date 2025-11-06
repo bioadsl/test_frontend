@@ -1,0 +1,20 @@
+[04/11/2025 16:03:00,58] "Checking environment (Git, GitHub CLI)..."
+[04/11/2025 16:03:01,02] "Validating GitHub auth..."
+github.com
+  ✓ Logged in to github.com account bioadsl (GH_TOKEN)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: github_pat_11ACMDMIA0LTvAvAIWJ0dM_***********************************************************
+[04/11/2025 16:03:01,84] "ERROR: Unable to resolve workflow; please pass --workflow <name|id>."
+unknown flag: --json
+
+Usage:  gh workflow view [<workflow-id> | <workflow-name> | <filename>] [flags]
+
+Flags:
+  -r, --ref string   The branch or tag name which contains the version of the workflow file you'd like to view
+  -w, --web          Open workflow in the browser
+  -y, --yaml         View the workflow yaml file
+  
+[04/11/2025 16:03:02,03] "Workflow not found by name/file. Listing available workflows..."
+E2E Tests	active	203842521
+[04/11/2025 16:03:03,13] "ERROR: Unable to resolve workflow; please pass --workflow <name|id>."

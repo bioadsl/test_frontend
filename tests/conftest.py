@@ -1,4 +1,11 @@
 import os
+import sys
+from pathlib import Path
+
+# Garantir que o diretório raiz do projeto esteja no PYTHONPATH no momento do import
+project_root = Path(__file__).resolve().parents[1]
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -18,8 +25,12 @@ def pytest_addoption(parser):
 @pytest.fixture(scope="session")
 def driver(request):
     options = Options()
-    # Headless estável em Chrome 109+ (pode ser desativado com --headed)
-    headed = request.config.getoption("--headed")
+    # Headless estável em Chrome 109+ (pode ser desativado com --headed ou env PYTEST_HEADED=1)
+    env_headed = os.getenv("PYTEST_HEADED", "").lower() in ("1", "true", "yes")
+    try:
+        headed = request.config.getoption("--headed") or env_headed
+    except Exception:
+        headed = env_headed
     if not headed:
         options.add_argument("--headless=new")
     options.add_argument("--window-size=1365,900")
