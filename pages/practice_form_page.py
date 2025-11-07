@@ -52,6 +52,7 @@ class PracticeFormPage:
         self.driver.get(self.URL)
         # remover banner fixo que às vezes cobre botões
         self.driver.execute_script("var b=document.getElementById('fixedban'); if(b){b.remove();}")
+        self.driver.execute_script("var a=document.getElementById('adplus-anchor'); if(a){a.remove();}")
         self.driver.execute_script("var f=document.querySelector('footer'); if(f){f.remove();}")
         self._pause_and_capture("open")
 
@@ -80,7 +81,16 @@ class PracticeFormPage:
     def set_birth_date(self, day: int, month_text: str, year: int):
         # Abre o datepicker
         dob = self.wait.until(EC.element_to_be_clickable((By.ID, "dateOfBirthInput")))
-        dob.click()
+        # Garantir visibilidade e centralização para reduzir interceptações
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", dob)
+        except Exception:
+            pass
+        try:
+            dob.click()
+        except ElementClickInterceptedException:
+            # fallback JS caso algo esteja sobrepondo o input
+            self.driver.execute_script("arguments[0].click();", dob)
         # Seleciona mês e ano
         month_select = self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "react-datepicker__month-select"))
