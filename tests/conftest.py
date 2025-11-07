@@ -71,6 +71,12 @@ def driver(request):
     if not headed:
         # Comentário (PT-BR): Usar headless new (estável no Chrome 109+) em todos os ambientes.
         options.add_argument("--headless=new")
+    else:
+        # Garantir janela visível/maximizada em modo apresentação
+        try:
+            options.add_argument("--start-maximized")
+        except Exception:
+            pass
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")

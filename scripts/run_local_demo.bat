@@ -40,8 +40,8 @@ for %%A in (%*) do (
 
 REM Enforce modo headed SEMPRE (+ delay padrão amigável) para apresentação ao vivo
 set ARGS=%ARGS% --headed
-if not defined STEP_DELAY_MS set STEP_DELAY_MS=700
-if not defined SCREENSHOT_DELAY_MS set SCREENSHOT_DELAY_MS=600
+if not defined STEP_DELAY_MS set STEP_DELAY_MS=1200
+if not defined SCREENSHOT_DELAY_MS set SCREENSHOT_DELAY_MS=800
 
 echo Executando: pytest %ARGS% (PYTEST_HEADED=%PYTEST_HEADED%)
 echo [INFO] Executando pytest com argumentos: %ARGS% >> "!LOGFILE!"
