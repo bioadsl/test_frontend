@@ -35,17 +35,13 @@ set ARGS=-m e2e --junitxml "%REPORTS%\junit.xml" --html "%REPORTS%\pytest.html" 
 
 set PYTEST_HEADED=1
 for %%A in (%*) do (
-  if /I "%%A"=="--headless" set PYTEST_HEADED=
-  if /I "%%A"=="--headed" set PYTEST_HEADED=1
   if /I "%%A"=="--keep-screens" set KEEP_SCREENS=1
 )
 
-REM Enforce modo headed (+ delay padrão amigável) para apresentação ao vivo
-if "%PYTEST_HEADED%"=="1" (
-  set ARGS=%ARGS% --headed
-  if not defined STEP_DELAY_MS set STEP_DELAY_MS=700
-  if not defined SCREENSHOT_DELAY_MS set SCREENSHOT_DELAY_MS=600
-)
+REM Enforce modo headed SEMPRE (+ delay padrão amigável) para apresentação ao vivo
+set ARGS=%ARGS% --headed
+if not defined STEP_DELAY_MS set STEP_DELAY_MS=700
+if not defined SCREENSHOT_DELAY_MS set SCREENSHOT_DELAY_MS=600
 
 echo Executando: pytest %ARGS% (PYTEST_HEADED=%PYTEST_HEADED%)
 echo [INFO] Executando pytest com argumentos: %ARGS% >> "!LOGFILE!"
