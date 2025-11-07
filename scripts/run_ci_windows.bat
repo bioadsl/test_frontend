@@ -8,6 +8,8 @@ set ROOT=%~dp0..
 set VENV=%ROOT%\.venv
 set REPORTS=%ROOT%\reports
 set SCREENSHOTS=%REPORTS%\screenshots
+REM Garantir headless no CI: limpar qualquer herança de PYTEST_HEADED
+set PYTEST_HEADED=
 
 if not exist "%VENV%\Scripts\python.exe" (
   echo Criando venv em "%VENV%"

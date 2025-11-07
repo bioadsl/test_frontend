@@ -40,6 +40,13 @@ for %%A in (%*) do (
   if /I "%%A"=="--keep-screens" set KEEP_SCREENS=1
 )
 
+REM Enforce modo headed (+ delay padrão amigável) para apresentação ao vivo
+if "%PYTEST_HEADED%"=="1" (
+  set ARGS=%ARGS% --headed
+  if not defined STEP_DELAY_MS set STEP_DELAY_MS=700
+  if not defined SCREENSHOT_DELAY_MS set SCREENSHOT_DELAY_MS=600
+)
+
 echo Executando: pytest %ARGS% (PYTEST_HEADED=%PYTEST_HEADED%)
 echo [INFO] Executando pytest com argumentos: %ARGS% >> "!LOGFILE!"
 "%VENV%\Scripts\python.exe" -m pytest %ARGS%
