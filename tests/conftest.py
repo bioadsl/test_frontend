@@ -29,6 +29,12 @@ def pytest_addoption(parser):
         default=False,
         help="Executa com navegador visível (sem headless)",
     )
+    parser.addoption(
+        "--step-delay",
+        action="store",
+        default=None,
+        help="Delay (segundos) entre etapas de ação para percepção humana (ex.: 0.7)",
+    )
 
 
 @pytest.fixture(scope="session")
@@ -63,6 +69,29 @@ def driver(request):
         except Exception:
             pass
 
+    # Configuração de delay entre etapas (segundos)
+    # Prioridade: --step-delay > STEP_DELAY_MS env > STEP_DELAY_S env > padrão 0
+    step_delay_opt = None
+    try:
+        step_delay_opt = request.config.getoption("--step-delay")
+    except Exception:
+        step_delay_opt = None
+    env_ms = os.getenv("STEP_DELAY_MS")
+    env_s = os.getenv("STEP_DELAY_S")
+    delay_seconds = 0.0
+    try:
+        if step_delay_opt is not None:
+            delay_seconds = float(step_delay_opt)
+        elif env_ms:
+            delay_seconds = float(env_ms) / 1000.0
+        elif env_s:
+            delay_seconds = float(env_s)
+    except Exception:
+        delay_seconds = 0.0
+
+    # Armazena no driver para que Page Objects possam utilizar
+    setattr(driver, "_step_delay_seconds", delay_seconds)
+
     yield driver
 
     driver.quit()
@@ -80,6 +109,16 @@ def _auto_screenshot_fixture(request, driver, screenshots_dir):
     # Disponibiliza driver e pasta para hooks
     request.node._driver = driver
     request.node._screenshots_dir = screenshots_dir
+    # Também expõe no driver para uso por Page Objects
+    try:
+        setattr(driver, "_screenshots_dir", screenshots_dir)
+    except Exception:
+        pass
+    # Armazena nodeid no driver para correlação com screenshots de etapas
+    try:
+        setattr(driver, "_current_nodeid", request.node.nodeid)
+    except Exception:
+        pass
     yield
     try:
         ts = datetime.now().strftime("%Y%m%d-%H%M%S")

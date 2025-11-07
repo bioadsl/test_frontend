@@ -103,6 +103,17 @@ Observações:
   - Unix/macOS: `PYTEST_HEADED=1 ./.venv/bin/python -m pytest -m e2e -q`
 - O teste gera uma imagem .jpg temporária para upload sem depender de arquivos externos.
 
+### Delay configurável entre etapas (percepção humana)
+- Para evitar que “prints”/screenshots sejam idênticos em execuções muito rápidas e permitir análise passo a passo, foi adicionado um delay configurável entre cada ação do Page Object.
+- Como usar:
+  - Via CLI: passe `--step-delay=<segundos>` para o pytest (ex.: `--step-delay=0.7`).
+    - Windows (runner pronto): `scripts\run_report_windows.bat --headed --step-delay=0.7`
+    - Direto: `.\.venv\Scripts\python -m pytest -m e2e --step-delay=0.7`
+  - Via variável de ambiente: `STEP_DELAY_MS` (milissegundos) ou `STEP_DELAY_S` (segundos).
+    - Ex.: PowerShell: `$env:STEP_DELAY_MS='700'; .\.venv\Scripts\python -m pytest -m e2e`
+- Recomendação: `700ms` (~`0.7s`) para boa percepção sem prejudicar estabilidade.
+- O delay mantém a sequência lógica, não altera a lógica de waits, e captura screenshots após cada ação relevante (open, preenchimentos, seleções, submit, modais), além de final e falha.
+
 ## Integração Contínua
 - O workflow em `.github/workflows/ci.yml` executa os testes em uma matriz de SO/Python.
 - Matriz atual: `ubuntu-latest`, `windows-latest`, `macos-latest` × Python `3.10` e `3.11`.

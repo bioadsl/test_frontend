@@ -27,8 +27,15 @@ set ARGS=-m e2e --junitxml "%JUNIT%" --html "%HTML_REPORT%" --self-contained-htm
 
 REM Modo headed opcional
 set PYTEST_HEADED=
+set STEP_DELAY_OPT=
 for %%A in (%*) do (
   if /I "%%A"=="--headed" set PYTEST_HEADED=1
+  rem Suporta formato --step-delay=0.7
+  echo %%A | findstr /I /B /C:"--step-delay=" >nul && set STEP_DELAY_OPT=%%A
+)
+
+if defined STEP_DELAY_OPT (
+  set ARGS=%ARGS% %STEP_DELAY_OPT%
 )
 
 echo Executando: pytest %ARGS% (PYTEST_HEADED=%PYTEST_HEADED%)
