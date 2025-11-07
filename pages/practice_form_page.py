@@ -75,10 +75,29 @@ class PracticeFormPage:
 
     def open(self):
         self.driver.get(self.URL)
-        # remover banner fixo que às vezes cobre botões
+        # Comentário (PT-BR): Após navegação, remover overlays recorrentes
+        # e aguardar carregamento do documento.
         self.driver.execute_script("var b=document.getElementById('fixedban'); if(b){b.remove();}")
         self.driver.execute_script("var a=document.getElementById('adplus-anchor'); if(a){a.remove();}")
         self.driver.execute_script("var f=document.querySelector('footer'); if(f){f.remove();}")
+        self._wait_page_loaded(timeout_s=10.0)
+        # Comentário (PT-BR): Verifica elemento chave da página; se não presente,
+        # faz uma tentativa de atualização para recuperar possíveis travamentos.
+        try:
+            WebDriverWait(self.driver, 20).until(
+                EC.presence_of_element_located((By.ID, "dateOfBirthInput"))
+            )
+        except Exception:
+            try:
+                self.driver.refresh()
+                self._wait_page_loaded(timeout_s=10.0)
+                WebDriverWait(self.driver, 20).until(
+                    EC.presence_of_element_located((By.ID, "dateOfBirthInput"))
+                )
+            except Exception:
+                # Comentário (PT-BR): Não interromper aqui; seguiremos e o wait
+                # específico falhará com contexto adequado.
+                pass
         self._pause_and_capture("open")
 
     # --- Fillers ---

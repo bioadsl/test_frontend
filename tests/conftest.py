@@ -51,18 +51,33 @@ def driver(request):
     options = Options()
     # Headless estável em Chrome 109+ (pode ser desativado com --headed ou env PYTEST_HEADED=1)
     env_headed = os.getenv("PYTEST_HEADED", "").lower() in ("1", "true", "yes")
+    # Comentário (PT-BR): Detecta ambiente de CI para ajustes de flags de headless
+    is_ci = os.getenv("CI", "").lower() in ("1", "true", "yes")
     try:
         headed = request.config.getoption("--headed") or env_headed
     except Exception:
         headed = env_headed
     if not headed:
-        options.add_argument("--headless=new")
+        # Comentário (PT-BR): Em runners Linux (CI) alguns ambientes têm melhor
+        # estabilidade com o modo headless clássico.
+        options.add_argument("--headless" if is_ci else "--headless=new")
     options.add_argument("--window-size=1365,900")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-infobars")
+    # Comentário (PT-BR): Flags adicionais para estabilidade em headless CI
+    options.add_argument("--disable-software-rasterizer")
+    options.add_argument("--disable-background-timer-throttling")
+    options.add_argument("--disable-backgrounding-occluded-windows")
+    options.add_argument("--disable-renderer-backgrounding")
+    options.add_argument("--remote-debugging-port=9222")
+    # Estratégia de carregamento 'eager' pode reduzir travamentos de navegação
+    try:
+        options.page_load_strategy = "eager"
+    except Exception:
+        pass
 
     chrome_path = os.environ.get("CHROME_PATH")
     if chrome_path:
