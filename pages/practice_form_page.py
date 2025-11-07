@@ -15,6 +15,10 @@ class PracticeFormPage:
         self.wait = WebDriverWait(driver, timeout)
         # Delay configurável entre etapas, vindo do driver (definido em conftest)
         self._delay_s = float(getattr(driver, "_step_delay_seconds", 0.0) or 0.0)
+        # Novo: delay específico para screenshots, em segundos
+        # Comentário (PT-BR): Este delay é aplicado imediatamente antes da captura
+        # da imagem para garantir que elementos tenham sido renderizados.
+        self._shot_delay_s = float(getattr(driver, "_shot_delay_seconds", 0.0) or 0.0)
         # Diretório de screenshots por teste
         self._shots_dir = getattr(driver, "_screenshots_dir", None)
         # Identificador do teste atual para correlação
@@ -32,10 +36,31 @@ class PracticeFormPage:
             .replace(" ", "_")
         )
 
+    def _wait_page_loaded(self, timeout_s: float = 5.0):
+        """
+        Comentário (PT-BR): Aguarda o estado de carregamento do documento ser
+        'complete', garantindo que a página esteja totalmente carregada antes
+        de capturar a screenshot. Em operações dinâmicas, o readyState já
+        estará como 'complete', mas mantemos uma espera curta e resiliente.
+        """
+        try:
+            WebDriverWait(self.driver, timeout_s).until(
+                lambda d: d.execute_script("return document.readyState") == "complete"
+            )
+        except Exception:
+            # Comentário (PT-BR): Não falhar o teste por eventuais timeouts;
+            # a captura seguirá mesmo assim para não interromper o fluxo.
+            pass
+
     def _pause_and_capture(self, label: str):
-        # Pausa para percepção humana
+        # Pausa para percepção humana nas ações (se configurada)
         if self._delay_s and self._delay_s > 0:
             time.sleep(self._delay_s)
+        # Aguarda página totalmente carregada antes da captura
+        self._wait_page_loaded(timeout_s=5.0)
+        # Aplica delay específico de screenshot, se configurado
+        if self._shot_delay_s and self._shot_delay_s > 0:
+            time.sleep(self._shot_delay_s)
         # Captura screenshot de etapa
         try:
             if self._shots_dir:

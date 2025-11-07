@@ -35,6 +35,15 @@ def pytest_addoption(parser):
         default=None,
         help="Delay (segundos) entre etapas de ação para percepção humana (ex.: 0.7)",
     )
+    # Novo: delay específico para captura de screenshots, em milissegundos
+    # Comentário (PT-BR): Esta opção permite controlar um atraso adicional APENAS
+    # antes da captura de cada screenshot, sem afetar o ritmo das ações.
+    parser.addoption(
+        "--shot-delay-ms",
+        action="store",
+        default=None,
+        help="Delay (milissegundos) ANTES da captura de cada screenshot (ex.: 800)",
+    )
 
 
 @pytest.fixture(scope="session")
@@ -96,6 +105,28 @@ def driver(request):
 
     # Armazena no driver para que Page Objects possam utilizar
     setattr(driver, "_step_delay_seconds", delay_seconds)
+
+    # Configuração de delay específico para screenshots (milissegundos)
+    # Comentário (PT-BR): Prioridade: --shot-delay-ms > SCREENSHOT_DELAY_MS/env > SHOT_DELAY_MS/env > delay_time/env.
+    # O valor é convertido para segundos e disponibilizado no driver.
+    shot_delay_opt = None
+    try:
+        shot_delay_opt = request.config.getoption("--shot-delay-ms")
+    except Exception:
+        shot_delay_opt = None
+    env_shot_ms = os.getenv("SCREENSHOT_DELAY_MS") or os.getenv("SHOT_DELAY_MS") or os.getenv("delay_time")
+    shot_delay_seconds = 0.0
+    try:
+        if shot_delay_opt is not None:
+            shot_delay_seconds = float(shot_delay_opt) / 1000.0
+        elif env_shot_ms:
+            shot_delay_seconds = float(env_shot_ms) / 1000.0
+    except Exception:
+        shot_delay_seconds = 0.0
+    try:
+        setattr(driver, "_shot_delay_seconds", shot_delay_seconds)
+    except Exception:
+        pass
 
     yield driver
 
