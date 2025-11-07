@@ -1,7 +1,13 @@
 param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$false)]
     [string]$ScreenshotsDir
 )
+
+# Comentário (PT-BR): Se não for informado, usar caminho padrão relativo
+if (-not $ScreenshotsDir -or $ScreenshotsDir.Trim() -eq "") {
+    $ScreenshotsDir = Join-Path $PSScriptRoot "..\reports\screenshots"
+    Write-Host "[Cleanup] ScreenshotsDir não informado; usando padrão: $ScreenshotsDir"
+}
 
 # Comentário (PT-BR): Este script remove arquivos .png da pasta de screenshots
 # após a execução dos testes. Ele valida existência, trata erros por arquivo,
