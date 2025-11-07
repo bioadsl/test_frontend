@@ -181,23 +181,57 @@ class PracticeFormPage:
         self._pause_and_capture("fill_address")
 
     def select_state(self, state_text: str):
-        # Abre o combo React-Select
-        state_container = self.wait.until(EC.element_to_be_clickable((By.ID, "state")))
-        state_container.click()
-        # Seleciona pelo texto visível
-        option = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, f"//div[contains(@id,'option') and text()='{state_text}']"))
-        )
-        option.click()
+        # Abre o combo React-Select com maior robustez
+        state_container = self.wait.until(EC.presence_of_element_located((By.ID, "state")))
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", state_container)
+        except Exception:
+            pass
+        try:
+            # Primeiro tenta clicar normalmente
+            self.wait.until(EC.element_to_be_clickable((By.ID, "state"))).click()
+        except ElementClickInterceptedException:
+            # Fallback via JS em caso de overlay/interceptação
+            self.driver.execute_script("arguments[0].click();", state_container)
+
+        # React-Select fornece um input interno; digita o texto e confirma com ENTER
+        try:
+            internal_input = self.wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "#state input"))
+            )
+            internal_input.send_keys(state_text)
+            # Confirma seleção
+            internal_input.send_keys("\n")
+        except Exception:
+            # Fallback: selecionar pelo texto visível do option
+            option = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, f"//div[contains(@id,'option') and text()='{state_text}']"))
+            )
+            option.click()
         self._pause_and_capture(f"select_state_{self._sanitize(state_text)}")
 
     def select_city(self, city_text: str):
-        city_container = self.wait.until(EC.element_to_be_clickable((By.ID, "city")))
-        city_container.click()
-        option = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, f"//div[contains(@id,'option') and text()='{city_text}']"))
-        )
-        option.click()
+        city_container = self.wait.until(EC.presence_of_element_located((By.ID, "city")))
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", city_container)
+        except Exception:
+            pass
+        try:
+            self.wait.until(EC.element_to_be_clickable((By.ID, "city"))).click()
+        except ElementClickInterceptedException:
+            self.driver.execute_script("arguments[0].click();", city_container)
+
+        try:
+            internal_input = self.wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "#city input"))
+            )
+            internal_input.send_keys(city_text)
+            internal_input.send_keys("\n")
+        except Exception:
+            option = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, f"//div[contains(@id,'option') and text()='{city_text}']"))
+            )
+            option.click()
         self._pause_and_capture(f"select_city_{self._sanitize(city_text)}")
 
     def submit(self):

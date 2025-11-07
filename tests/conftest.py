@@ -11,6 +11,13 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+# ClientConfig foi introduzido em versões mais novas do Selenium; manter compatibilidade.
+try:
+    from selenium.webdriver.common.client_config import ClientConfig  # type: ignore
+    _HAS_CLIENT_CONFIG = True
+except Exception:
+    ClientConfig = None  # type: ignore
+    _HAS_CLIENT_CONFIG = False
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime
 
@@ -53,20 +60,18 @@ def driver(request):
     # Headless estável em Chrome 109+ (pode ser desativado com --headed ou env PYTEST_HEADED=1)
     env_headed = os.getenv("PYTEST_HEADED", "").lower() in ("1", "true", "yes")
     # Comentário (PT-BR): Detecta ambiente de CI e plataforma para ajustes finos
-    is_ci = os.getenv("CI", "").lower() in ("1", "true", "yes")
-    is_macos = platform.system().lower() == "darwin"
+    is_ci = os.getenv("CI", "").lower() in ("1", "true", "yes") or os.getenv("GITHUB_ACTIONS", "").lower() in ("1", "true", "yes")
+    system = platform.system().lower()
+    is_macos = system == "darwin"
+    is_windows = system == "windows"
     try:
         headed = request.config.getoption("--headed") or env_headed
     except Exception:
         headed = env_headed
     if not headed:
-        # Comentário (PT-BR): Em Linux (CI) preferimos headless clássico; em macOS
-        # e ambientes locais, usamos headless new para maior compatibilidade.
-        if is_ci and not is_macos:
-            options.add_argument("--headless")
-        else:
-            options.add_argument("--headless=new")
-    options.add_argument("--window-size=1365,900")
+        # Comentário (PT-BR): Usar headless new (estável no Chrome 109+) em todos os ambientes.
+        options.add_argument("--headless=new")
+    options.add_argument("--window-size=1920,1080")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -77,14 +82,11 @@ def driver(request):
     options.add_argument("--disable-background-timer-throttling")
     options.add_argument("--disable-backgrounding-occluded-windows")
     options.add_argument("--disable-renderer-backgrounding")
-    # Comentário (PT-BR): Evitar definir porta fixa de remote debugging em macOS,
-    # pois pode conflitar com alocação do ChromeDriver; manter em Linux/Windows.
-    if not is_macos:
-        options.add_argument("--remote-debugging-port=9222")
-    # Estratégia de carregamento 'eager' pode reduzir travamentos de navegação
+    # Comentário (PT-BR): Evitar porta fixa de remote debugging em todos os SOs
+    # para reduzir conflitos com alocação do ChromeDriver em CI.
+    # Estratégia de carregamento: em CI usar 'normal' para estabilidade; local 'eager'.
     try:
-        # Em macOS (CI), usar 'normal' para garantir DOM completo; demais 'eager'.
-        options.page_load_strategy = "normal" if (is_ci and is_macos) else "eager"
+        options.page_load_strategy = "normal" if is_ci else "eager"
     except Exception:
         pass
 
@@ -93,18 +95,26 @@ def driver(request):
         options.binary_location = chrome_path
 
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
+    # Timeout HTTP do executor via ClientConfig (evita deprecation warnings)
+    exec_timeout = 45
+    if is_ci:
+        exec_timeout = 60
+        if is_macos or is_windows:
+            exec_timeout = 90
+    if _HAS_CLIENT_CONFIG and ClientConfig is not None:
+        driver = webdriver.Chrome(
+            service=service,
+            options=options,
+            client_config=ClientConfig(timeout=exec_timeout),
+        )
+    else:
+        driver = webdriver.Chrome(service=service, options=options)
+        try:
+            # Compatibilidade com Selenium antigo:
+            driver.command_executor.set_timeout(exec_timeout)
+        except Exception:
+            pass
     driver.implicitly_wait(0)
-    # Timeout HTTP do executor: aumentar em macOS (CI) para reduzir ReadTimeouts
-    try:
-        exec_timeout = 45
-        if is_ci:
-            exec_timeout = 60
-            if is_macos:
-                exec_timeout = 90
-        driver.command_executor.set_timeout(exec_timeout)
-    except Exception:
-        pass
 
     if headed:
         try:
@@ -186,11 +196,7 @@ def _auto_screenshot_fixture(request, driver, screenshots_dir):
         pass
     yield
     try:
-        # Em teardown, evitar esperas longas caso o browser tenha morrido
-        try:
-            driver.command_executor.set_timeout(8)
-        except Exception:
-            pass
+        # Em teardown, captura de screenshot final sem alterar timeout do executor
         ts = datetime.now().strftime("%Y%m%d-%H%M%S")
         fname = f"{_sanitize_nodeid(request.node.nodeid)}_end_{ts}.png"
         driver.save_screenshot(str(screenshots_dir / fname))

@@ -1,25 +1,25 @@
 Run python -c "import os; os.makedirs('reports', exist_ok=True)"
   python -c "import os; os.makedirs('reports', exist_ok=True)"
   python -m pytest -m e2e --step-delay=0.6 --junitxml reports/junit.xml --html reports/pytest.html --self-contained-html --cov=. --cov-report=xml:reports/coverage.xml --cov-report=term -q
-  shell: /bin/bash -e {0}
+  shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
   env:
-    pythonLocation: /Users/runner/hostedtoolcache/Python/3.10.11/arm64
-    PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.10.11/arm64/lib/pkgconfig
-    Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.11/arm64
-    Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.11/arm64
-    Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.11/arm64
+    pythonLocation: C:\hostedtoolcache\windows\Python\3.10.11\x64
+    PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.10.11\x64/lib/pkgconfig
+    Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.10.11\x64
+    Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.10.11\x64
+    Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.10.11\x64
     PYTHONUNBUFFERED: 1
 F                                                                        [100%]
-=================================== FAILURES ===================================
-________________________ test_practice_form_submission _________________________
+================================== FAILURES ===================================
+________________________ test_practice_form_submission ________________________
 
-self = <urllib3.connectionpool.HTTPConnectionPool object at 0x107224970>
-conn = <urllib3.connection.HTTPConnection object at 0x11030d660>
-method = 'POST', url = '/session/0b5da3cf9c489633fb0195e0ff592257/element'
-body = '{"using": "xpath", "value": "//label[text()=\'Male\']"}'
-headers = HTTPHeaderDict({'Accept': 'application/json', 'Content-Type': 'application/json;charset=UTF-8', 'User-Agent': 'selenium/4.38.0 (python mac)', 'Connection': 'keep-alive'})
+self = <urllib3.connectionpool.HTTPConnectionPool object at 0x0000014854946B60>
+conn = <urllib3.connection.HTTPConnection object at 0x0000014854AD3670>
+method = 'POST', url = '/session/c190f7b316d7451e8d3bf7f8c8016dcb/element'
+body = '{"using": "css selector", "value": "[id=\\"state\\"]"}'
+headers = HTTPHeaderDict({'Accept': 'application/json', 'Content-Type': 'application/json;charset=UTF-8', 'User-Agent': 'selenium/4.38.0 (python win32)', 'Connection': 'keep-alive'})
 retries = Retry(total=3, connect=None, read=None, redirect=None, status=None)
-timeout = Timeout(connect=45, read=45, total=None), chunked = False
+timeout = Timeout(connect=60, read=60, total=None), chunked = False
 response_conn = None, preload_content = True, decode_content = True
 enforce_content_length = True
 
@@ -182,19 +182,20 @@ enforce_content_length = True
         try:
 >           response = conn.getresponse()
 
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/connectionpool.py:534: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/connection.py:565: in getresponse
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\connectionpool.py:534: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\connection.py:565: in getresponse
     httplib_response = super().getresponse()
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/http/client.py:1375: in getresponse
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\http\client.py:1375: in getresponse
     response.begin()
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/http/client.py:318: in begin
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\http\client.py:318: in begin
     version, status, reason = self._read_status()
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/http/client.py:279: in _read_status
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\http\client.py:279: in _read_status
     line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-self = <socket.SocketIO object at 0x11030d780>, b = <memory at 0x10713ba00>
+self = <socket.SocketIO object at 0x0000014854AD3790>
+b = <memory at 0x000001485499E740>
 
     def readinto(self, b):
         """Read up to len(b) bytes into the writable buffer *b* and return
@@ -213,11 +214,11 @@ self = <socket.SocketIO object at 0x11030d780>, b = <memory at 0x10713ba00>
 >               return self._sock.recv_into(b)
 E               TimeoutError: timed out
 
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/socket.py:705: TimeoutError
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\socket.py:705: TimeoutError
 
 The above exception was the direct cause of the following exception:
 
-driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="0b5da3cf9c489633fb0195e0ff592257")>
+driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="c190f7b316d7451e8d3bf7f8c8016dcb")>
 
     @pytest.mark.e2e
     def test_practice_form_submission(driver):
@@ -225,7 +226,7 @@ driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="0b5da3cf9c4896
         page.open()
     
         # Dados de teste
-        first_name = "João"
+        first_name = "Jo�o"
         last_name = "da Silva"
         email = "joao@email.com"
         gender = "Male"
@@ -241,45 +242,52 @@ driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="0b5da3cf9c4896
         # Preenchimento
         page.fill_name(first_name, last_name)
         page.fill_email(email)
->       page.select_gender(gender)
+        page.select_gender(gender)
+        page.fill_mobile(phone)
+        page.set_birth_date(day, month_text, year)
+        page.add_subject(subject)
+        page.check_hobby(hobby)
+        page.upload_picture(img_path)
+        page.fill_address(address)
+>       page.select_state(state)
 
-tests/test_practice_form_e2e.py:28: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-pages/practice_form_page.py:115: in select_gender
-    label = self.wait.until(
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/selenium/webdriver/support/wait.py:129: in until
+tests\test_practice_form_e2e.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+pages\practice_form_page.py:185: in select_state
+    state_container = self.wait.until(EC.element_to_be_clickable((By.ID, "state")))
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\selenium\webdriver\support\wait.py:129: in until
     value = method(self._driver)
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/selenium/webdriver/support/expected_conditions.py:624: in _predicate
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\selenium\webdriver\support\expected_conditions.py:624: in _predicate
     target = driver.find_element(*target)  # grab element at locator
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py:926: in find_element
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\selenium\webdriver\remote\webdriver.py:926: in find_element
     return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/selenium/webdriver/remote/webdriver.py:455: in execute
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\selenium\webdriver\remote\webdriver.py:455: in execute
     response = cast(RemoteConnection, self.command_executor).execute(driver_command, params)
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/selenium/webdriver/remote/remote_connection.py:407: in execute
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\selenium\webdriver\remote\remote_connection.py:407: in execute
     return self._request(command_info[0], url, body=data)
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/selenium/webdriver/remote/remote_connection.py:431: in _request
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\selenium\webdriver\remote\remote_connection.py:431: in _request
     response = self._conn.request(method, url, body=body, headers=headers, timeout=self._client_config.timeout)
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/_request_methods.py:143: in request
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\_request_methods.py:143: in request
     return self.request_encode_body(
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/_request_methods.py:278: in request_encode_body
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\_request_methods.py:278: in request_encode_body
     return self.urlopen(method, url, **extra_kw)
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/poolmanager.py:459: in urlopen
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\poolmanager.py:459: in urlopen
     response = conn.urlopen(method, u.request_uri, **kw)
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/connectionpool.py:841: in urlopen
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\connectionpool.py:841: in urlopen
     retries = retries.increment(
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/util/retry.py:474: in increment
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\util\retry.py:474: in increment
     raise reraise(type(error), error, _stacktrace)
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/util/util.py:39: in reraise
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\util\util.py:39: in reraise
     raise value
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/connectionpool.py:787: in urlopen
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\connectionpool.py:787: in urlopen
     response = self._make_request(
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/connectionpool.py:536: in _make_request
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\connectionpool.py:536: in _make_request
     self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-self = <urllib3.connectionpool.HTTPConnectionPool object at 0x107224970>
+self = <urllib3.connectionpool.HTTPConnectionPool object at 0x0000014854946B60>
 err = TimeoutError('timed out')
-url = '/session/0b5da3cf9c489633fb0195e0ff592257/element', timeout_value = 45
+url = '/session/c190f7b316d7451e8d3bf7f8c8016dcb/element', timeout_value = 60
 
     def _raise_timeout(
         self,
@@ -293,45 +301,84 @@ url = '/session/0b5da3cf9c489633fb0195e0ff592257/element', timeout_value = 45
 >           raise ReadTimeoutError(
                 self, url, f"Read timed out. (read timeout={timeout_value})"
             ) from err
-E           urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=45)
+E           urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='localhost', port=50628): Read timed out. (read timeout=60)
 
-/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/urllib3/connectionpool.py:367: ReadTimeoutError
------------------------------- Captured log call -------------------------------
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=45)")': /session/0b5da3cf9c489633fb0195e0ff592257/screenshot
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=45)")': /session/0b5da3cf9c489633fb0195e0ff592257/screenshot
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=45)")': /session/0b5da3cf9c489633fb0195e0ff592257/screenshot
----------------------------- Captured log teardown -----------------------------
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=8)")': /session/0b5da3cf9c489633fb0195e0ff592257/screenshot
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=8)")': /session/0b5da3cf9c489633fb0195e0ff592257/screenshot
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=8)")': /session/0b5da3cf9c489633fb0195e0ff592257/screenshot
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=8)")': /session/0b5da3cf9c489633fb0195e0ff592257
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=8)")': /session/0b5da3cf9c489633fb0195e0ff592257
-WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=8)")': /session/0b5da3cf9c489633fb0195e0ff592257
-=============================== warnings summary ===============================
+C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\site-packages\urllib3\connectionpool.py:367: ReadTimeoutError
+------------------------------ Captured log call ------------------------------
+WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=50628): Read timed out. (read timeout=60)")': /session/c190f7b316d7451e8d3bf7f8c8016dcb/screenshot
+WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=50628): Read timed out. (read timeout=60)")': /session/c190f7b316d7451e8d3bf7f8c8016dcb/screenshot
+WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=50628): Read timed out. (read timeout=60)")': /session/c190f7b316d7451e8d3bf7f8c8016dcb/screenshot
+---------------------------- Captured log teardown ----------------------------
+WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=50628): Read timed out. (read timeout=8)")': /session/c190f7b316d7451e8d3bf7f8c8016dcb/screenshot
+WARNING  urllib3.connectionpool:connectionpool.py:868 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPConnectionPool(host='localhost', port=50628): Read timed out. (read timeout=8)")': /session/c190f7b316d7451e8d3bf7f8c8016dcb/screenshot
+============================== warnings summary ===============================
 tests/test_practice_form_e2e.py::test_practice_form_submission
-  /Users/runner/work/test_frontend/test_frontend/tests/conftest.py:91: DeprecationWarning: set_timeout() in RemoteConnection is deprecated, set timeout in client_config instead
-    driver.command_executor.set_timeout(45)
+  D:\a\test_frontend\test_frontend\tests\conftest.py:105: DeprecationWarning: set_timeout() in RemoteConnection is deprecated, set timeout in client_config instead
+    driver.command_executor.set_timeout(exec_timeout)
 
 tests/test_practice_form_e2e.py::test_practice_form_submission
-  /Users/runner/work/test_frontend/test_frontend/tests/conftest.py:177: DeprecationWarning: set_timeout() in RemoteConnection is deprecated, set timeout in client_config instead
+  D:\a\test_frontend\test_frontend\tests\conftest.py:191: DeprecationWarning: set_timeout() in RemoteConnection is deprecated, set timeout in client_config instead
     driver.command_executor.set_timeout(8)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-- generated xml file: /Users/runner/work/test_frontend/test_frontend/reports/junit.xml -
-================================ tests coverage ================================
-______________ coverage: platform darwin, python 3.10.11-final-0 _______________
+--- generated xml file: D:\a\test_frontend\test_frontend\reports\junit.xml ----
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.10.11-final-0 _______________
 
 Name                              Stmts   Miss  Cover
 -----------------------------------------------------
-pages/practice_form_page.py         137     72    47%
-tests/conftest.py                   140     36    74%
-tests/test_practice_form_e2e.py      42     20    52%
-utils/file_utils.py                   9      0   100%
+pages\practice_form_page.py         137     41    70%
+tests\conftest.py                   150     40    73%
+tests\test_practice_form_e2e.py      42     13    69%
+utils\file_utils.py                   9      0   100%
 -----------------------------------------------------
-TOTAL                               328    128    61%
+TOTAL                               338     94    72%
 Coverage XML written to file reports/coverage.xml
-- Generated html report: file:///Users/runner/work/test_frontend/test_frontend/reports/pytest.html -
-=========================== short test summary info ============================
-FAILED tests/test_practice_form_e2e.py::test_practice_form_submission - urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='localhost', port=49204): Read timed out. (read timeout=45)
-1 failed, 2 warnings in 492.85s (0:08:12)
-Error: Process completed with exit code 1.
+- Generated html report: file:///D:/a/test_frontend/test_frontend/reports/pytest.html -
+=========================== short test summary info ===========================
+FAILED tests/test_practice_form_e2e.py::test_practice_form_submission - urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='localhost', port=50628): Read timed out. (read timeout=60)
+1 failed, 2 warnings in 658.11s (0:10:58)
+Resumo de falhas em CI (pytest e2e)
+
+Contexto:
+- Jobs afetados: macOS (3.10/3.11) e Windows (3.10/3.11).
+- Sintoma principal: ReadTimeoutError do ChromeDriver/urllib3 durante a etapa
+  de seleção de Estado na página DemoQA (React-Select), seguido de timeout
+  em screenshots de teardown. O job finaliza com: "Process completed with exit code 1".
+
+Trecho típico do erro:
+- urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='localhost', port=XXXXX):
+  Read timed out. (read timeout=60) ao executar find_element/execute(Command.FIND_ELEMENT).
+
+Diagnóstico provável:
+- Em headless/CI, o componente React-Select pode estar fora do viewport ou
+  sofrer interceptação por overlays/timers, causando travas no ChromeDriver
+  e estouros de timeout HTTP.
+
+Correções aplicadas no projeto:
+1) conftest.py
+   - Uso de headless new em todos os ambientes.
+   - page_load_strategy 'normal' em CI, 'eager' local.
+   - ClientConfig(timeout=90) em CI (Windows/macOS) para evitar warnings deprecation
+     e ampliar o timeout do executor.
+   - Flags estáveis para CI: window-size, disable-gpu, no-sandbox, disable-dev-shm-usage,
+     disable-extensions/infobars/backgrounding.
+
+2) pages/practice_form_page.py
+   - select_state/select_city agora:
+     • rolam elemento para o centro; 
+     • tentam clique normal e fallback via JS;
+     • priorizam digitação no input interno do React-Select seguida de ENTER;
+     • fallback para opção pelo texto visível.
+   - Remoção de overlays (fixedban, adplus-anchor, footer) e espera de readyState.
+
+Como validar localmente (Windows):
+  scripts\run_report_windows.bat --shot-delay-ms=800 --step-delay=0.6
+
+Se voltar a falhar em CI:
+- Aumentar STEP_DELAY_MS (ex.: 900) via env no workflow.
+- Conferir versão do Chrome/Driver instalada pelo runner.
+- Revisar logs/junit em reports/ para confirmar o ponto exato do timeout.
+
+Status atual:
+- Correções aplicadas e testes revalidados localmente sem regressão.
