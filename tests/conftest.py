@@ -62,6 +62,11 @@ def driver(request):
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(0)
+    # Reduz timeout HTTP padrão do executor (120s -> 45s)
+    try:
+        driver.command_executor.set_timeout(45)
+    except Exception:
+        pass
 
     if headed:
         try:
@@ -121,6 +126,11 @@ def _auto_screenshot_fixture(request, driver, screenshots_dir):
         pass
     yield
     try:
+        # Em teardown, evitar esperas longas caso o browser tenha morrido
+        try:
+            driver.command_executor.set_timeout(8)
+        except Exception:
+            pass
         ts = datetime.now().strftime("%Y%m%d-%H%M%S")
         fname = f"{_sanitize_nodeid(request.node.nodeid)}_end_{ts}.png"
         driver.save_screenshot(str(screenshots_dir / fname))

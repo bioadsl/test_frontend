@@ -53,7 +53,7 @@ jobs:
           PYTHONUNBUFFERED: '1'
         run: |
           python -c "import os; os.makedirs('reports', exist_ok=True)"
-          python -m pytest -m e2e --junitxml reports/junit.xml --html reports/pytest.html --self-contained-html --cov=. --cov-report=xml:reports/coverage.xml --cov-report=term -q
+          python -m pytest -m e2e --step-delay=0.6 --junitxml reports/junit.xml --html reports/pytest.html --self-contained-html --cov=. --cov-report=xml:reports/coverage.xml --cov-report=term -q
 
       - name: Publish test report summary
         if: always()
