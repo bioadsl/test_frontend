@@ -185,16 +185,64 @@ class PracticeFormPage:
         self._annotate_and_capture(last_el, "Nome Completo (Sobrenome)", last_name)
 
     def fill_email(self, email: str):
-        el = self.driver.find_element(By.ID, "userEmail")
+        # Aguarda presença/clicabilidade com recuperação em caso de travas
+        try:
+            el = self.wait.until(EC.element_to_be_clickable((By.ID, "userEmail")))
+        except Exception:
+            try:
+                self.driver.refresh()
+                self._wait_page_loaded(timeout_s=10.0)
+                el = self.wait.until(EC.element_to_be_clickable((By.ID, "userEmail")))
+            except Exception:
+                el = self.wait.until(EC.presence_of_element_located((By.ID, "userEmail")))
+        # Centraliza no viewport e tenta o clique com fallback JS
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
+        except Exception:
+            pass
+        try:
+            el.click()
+        except ElementClickInterceptedException:
+            try:
+                self.driver.execute_script("arguments[0].click();", el)
+            except Exception:
+                pass
         el.send_keys(email)
         self._annotate_and_capture(el, "E-mail", email)
 
     def select_gender(self, gender_label: str = "Male"):
-        # Usa o texto do label para maior robustez
-        label = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, f"//label[text()='{gender_label}']"))
-        )
-        label.click()
+        # Fecha overlays (ex.: datepicker) e aguarda label com resiliência
+        try:
+            self.driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+        except Exception:
+            pass
+        try:
+            label = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, f"//label[text()='{gender_label}']"))
+            )
+        except Exception:
+            try:
+                self.driver.refresh()
+                self._wait_page_loaded(timeout_s=10.0)
+                label = self.wait.until(
+                    EC.element_to_be_clickable((By.XPATH, f"//label[text()='{gender_label}']"))
+                )
+            except Exception:
+                label = self.wait.until(
+                    EC.presence_of_element_located((By.XPATH, f"//label[text()='{gender_label}']"))
+                )
+        # Centraliza e tenta clicar com fallback JS
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", label)
+        except Exception:
+            pass
+        try:
+            label.click()
+        except ElementClickInterceptedException:
+            try:
+                self.driver.execute_script("arguments[0].click();", label)
+            except Exception:
+                pass
         self._annotate_and_capture(label, "Gênero", gender_label, state="selecionado")
 
     def fill_mobile(self, number: str):
