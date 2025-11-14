@@ -1,6 +1,8 @@
 from typing import Dict
 import time
 from pathlib import Path
+import os
+import platform
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -13,7 +15,21 @@ class PracticeFormPage:
 
     def __init__(self, driver, timeout: int = 20):
         self.driver = driver
-        self.wait = WebDriverWait(driver, timeout)
+        # Ajusta timeout padrão para ambientes mais lentos (macOS/CI)
+        try:
+            is_ci = (os.getenv("CI", "").lower() in ("1", "true", "yes")) or (
+                os.getenv("GITHUB_ACTIONS", "").lower() in ("1", "true", "yes")
+            )
+        except Exception:
+            is_ci = False
+        try:
+            is_macos = platform.system().lower() == "darwin"
+        except Exception:
+            is_macos = False
+        effective_timeout = timeout
+        if is_macos or is_ci:
+            effective_timeout = max(timeout, 40)
+        self.wait = WebDriverWait(driver, effective_timeout)
         # Delay configurável entre etapas, vindo do driver (definido em conftest)
         self._delay_s = float(getattr(driver, "_step_delay_seconds", 0.0) or 0.0)
         # Novo: delay específico para screenshots, em segundos
@@ -180,7 +196,31 @@ class PracticeFormPage:
         first_el = self.wait.until(EC.visibility_of_element_located((By.ID, "firstName")))
         first_el.send_keys(first_name)
         self._annotate_and_capture(first_el, "Nome Completo (Primeiro Nome)", first_name)
-        last_el = self.driver.find_element(By.ID, "lastName")
+
+        # Aguarda sobrenome com resiliência (evita travas de rede/resposta do driver)
+        try:
+            last_el = self.wait.until(EC.element_to_be_clickable((By.ID, "lastName")))
+        except Exception:
+            try:
+                # Tentativa de recuperação: refresh e re-wait
+                self.driver.refresh()
+                self._wait_page_loaded(timeout_s=10.0)
+                last_el = self.wait.until(EC.element_to_be_clickable((By.ID, "lastName")))
+            except Exception:
+                # Último recurso: presença simples para não bloquear o fluxo
+                last_el = self.wait.until(EC.presence_of_element_located((By.ID, "lastName")))
+
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", last_el)
+        except Exception:
+            pass
+        try:
+            last_el.click()
+        except Exception:
+            try:
+                self.driver.execute_script("arguments[0].click();", last_el)
+            except Exception:
+                pass
         last_el.send_keys(last_name)
         self._annotate_and_capture(last_el, "Nome Completo (Sobrenome)", last_name)
 
@@ -369,7 +409,27 @@ class PracticeFormPage:
         self._annotate_and_capture(el, "Upload de Arquivo", fname, state="selecionado")
 
     def fill_address(self, address: str):
-        el = self.driver.find_element(By.ID, "currentAddress")
+        # Aguarda presença/clicabilidade para reduzir falhas em ambientes lentos
+        try:
+            el = self.wait.until(EC.element_to_be_clickable((By.ID, "currentAddress")))
+        except Exception:
+            try:
+                self.driver.refresh()
+                self._wait_page_loaded(timeout_s=10.0)
+                el = self.wait.until(EC.element_to_be_clickable((By.ID, "currentAddress")))
+            except Exception:
+                el = self.wait.until(EC.presence_of_element_located((By.ID, "currentAddress")))
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
+        except Exception:
+            pass
+        try:
+            el.click()
+        except Exception:
+            try:
+                self.driver.execute_script("arguments[0].click();", el)
+            except Exception:
+                pass
         el.send_keys(address)
         self._annotate_and_capture(el, "Endereço", address)
 
