@@ -94,7 +94,10 @@ def driver(request):
     # para reduzir conflitos com alocação do ChromeDriver em CI.
     # Estratégia de carregamento: em CI usar 'normal' para estabilidade; local 'eager'.
     try:
-        options.page_load_strategy = "normal" if is_ci else "eager"
+        # Em macOS, usar sempre 'eager' para evitar esperas por recursos pesados
+        # que podem causar travamentos/timeout no runner do Actions.
+        pls = "eager" if is_macos else ("normal" if is_ci else "eager")
+        options.page_load_strategy = pls
     except Exception:
         pass
 
@@ -144,6 +147,11 @@ def driver(request):
             driver.command_executor.set_timeout(exec_timeout)
         except Exception:
             pass
+    # Timeout específico de carregamento de página
+    try:
+        driver.set_page_load_timeout(90 if (is_ci and is_macos) else 60)
+    except Exception:
+        pass
     driver.implicitly_wait(0)
 
     if headed:
