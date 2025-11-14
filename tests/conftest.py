@@ -120,10 +120,16 @@ def driver(request):
 
     service = Service(ChromeDriverManager().install())
     # Timeout HTTP do executor via ClientConfig (evita deprecation warnings)
-    # Nota (CI): reduzir para 30s para falhar mais rápido em travas do ChromeDriver
+    # Afinamento por plataforma: no macOS runner do GitHub, comandos podem
+    # demorar mais; aumentar o timeout para reduzir ReadTimeout em operações
+    # legítimas (ex.: renderização, rolagem, screenshots).
     exec_timeout = 45
     if is_ci:
-        exec_timeout = 30
+        # Base mais generosa para CI em geral
+        exec_timeout = 60
+        # macOS: aumentar ainda mais para evitar ReadTimeoutError (urllib3)
+        if is_macos:
+            exec_timeout = 120
     if _HAS_CLIENT_CONFIG and ClientConfig is not None:
         driver = webdriver.Chrome(
             service=service,
