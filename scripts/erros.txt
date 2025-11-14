@@ -101,7 +101,7 @@ enforce_content_length = True
             Enforce content length checking. Body returned by server must match
             value of Content-Length header, if present. Otherwise, raise error.
         """
-        self.num_requests += 1
+self.num_tests += 1
     
         timeout_obj = self._get_timeout(timeout)
         timeout_obj.start_connect()

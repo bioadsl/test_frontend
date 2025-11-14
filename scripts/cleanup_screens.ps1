@@ -5,11 +5,11 @@ param(
 
 # Comentário (PT-BR): Se não for informado, usar caminho padrão relativo
 if (-not $ScreenshotsDir -or $ScreenshotsDir.Trim() -eq "") {
-    $ScreenshotsDir = Join-Path $PSScriptRoot "..\reports\screenshots"
+    $ScreenshotsDir = Join-Path $PSScriptRoot "..\screenshots"
     Write-Host "[Cleanup] ScreenshotsDir não informado; usando padrão: $ScreenshotsDir"
 }
 
-# Comentário (PT-BR): Este script remove arquivos .png da pasta de screenshots
+# Comentário (PT-BR): Este script remove arquivos de imagem (.png, .jpg, .jpeg) da pasta de screenshots
 # após a execução dos testes. Ele valida existência, trata erros por arquivo,
 # confirma remoção e registra logs detalhados para rastreamento.
 
@@ -21,13 +21,13 @@ try {
         return
     }
 
-    $files = Get-ChildItem -LiteralPath $ScreenshotsDir -Filter *.png -ErrorAction SilentlyContinue
+    $files = Get-ChildItem -LiteralPath $ScreenshotsDir -Include *.png,*.jpg,*.jpeg -File -ErrorAction SilentlyContinue
     if (-not $files -or $files.Count -eq 0) {
-        Write-Host "[Cleanup] Nenhum arquivo .png encontrado para remoção."
+        Write-Host "[Cleanup] Nenhum arquivo de imagem encontrado para remoção."
         return
     }
 
-    Write-Host ("[Cleanup] Encontrados {0} arquivo(s) .png." -f $files.Count)
+    Write-Host ("[Cleanup] Encontrados {0} arquivo(s) de imagem." -f $files.Count)
 
     $removed = 0
     foreach ($f in $files) {
@@ -48,7 +48,7 @@ try {
     }
 
     # Resumo final com checagem dos remanescentes
-    $remaining = Get-ChildItem -LiteralPath $ScreenshotsDir -Filter *.png -ErrorAction SilentlyContinue
+    $remaining = Get-ChildItem -LiteralPath $ScreenshotsDir -Include *.png,*.jpg,*.jpeg -File -ErrorAction SilentlyContinue
     $remainingCount = if ($remaining) { $remaining.Count } else { 0 }
     Write-Host ("[Cleanup] Removidos {0} arquivo(s). Restante(s): {1}." -f $removed, $remainingCount)
 } catch {
