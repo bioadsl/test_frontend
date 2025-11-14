@@ -162,6 +162,27 @@ Observações:
 - Verifique a página do workflow: `https://github.com/bioadsl/test_frontend/actions/workflows/ci.yml` (corrigido sem barra dupla nem parêntese de fechamento indevido).
 - O badge em `https://github.com/bioadsl/test_frontend/actions/workflows/ci.yml/badge.svg` ficará visível após o primeiro job do Actions executar.
 
+## Correções de Links e Verificação
+- Padronização de segurança em links externos: adicionado `rel="noopener noreferrer"` aos links que abrem em nova aba.
+- Acessibilidade: incluído `aria-label` em links de navegação (Ações, Resultados, Casos) e no link para `pytest.html`.
+- Consistência de navegação: verificados e corrigidos os apontamentos internos entre `reports/action.html`, `reports/results.html` e `reports/cases.html`.
+
+### Como validar os links automaticamente
+1. Suba o servidor local na raiz do projeto (qualquer servidor estático funciona; exemplo usando Python):
+
+```powershell
+python -m http.server 8000
+```
+
+2. Execute o verificador:
+
+```powershell
+python .\scripts\check_links.py http://localhost:8000/
+```
+
+Saída esperada: todos os links com status 200 (ou 3xx válido) e sem erros. O verificador também alerta sobre itens de acessibilidade (`aria-label`) e segurança (`rel` em `_blank`).
+
+
 ## Estrutura do Projeto
 - `tests/test_practice_form_e2e.py`: Teste E2E principal.
 - `tests/conftest.py`: Configuração do WebDriver (Chrome headless via webdriver-manager).

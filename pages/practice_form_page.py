@@ -98,17 +98,95 @@ class PracticeFormPage:
                 # Comentário (PT-BR): Não interromper aqui; seguiremos e o wait
                 # específico falhará com contexto adequado.
                 pass
+        # Novo: garantir também a presença do campo de telefone, que é usado cedo
+        try:
+            WebDriverWait(self.driver, 20).until(
+                EC.presence_of_element_located((By.ID, "userNumber"))
+            )
+        except Exception:
+            try:
+                self.driver.refresh()
+                self._wait_page_loaded(timeout_s=10.0)
+                WebDriverWait(self.driver, 20).until(
+                    EC.presence_of_element_located((By.ID, "userNumber"))
+                )
+            except Exception:
+                pass
         self._pause_and_capture("open")
+
+    def _annotate_and_capture(self, element, field_label: str, value: str, state: str = "ativo/focado"):
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+        except Exception:
+            pass
+        try:
+            overlay_id = self.driver.execute_script(
+                """
+                var el = arguments[0]; var label=arguments[1]; var val=arguments[2]; var st=arguments[3];
+                var r = el.getBoundingClientRect();
+                var x = r.left + window.scrollX; var y = r.top + window.scrollY;
+                var ov = document.createElement('div');
+                var id = 'shot-'+Date.now();
+                ov.setAttribute('data-shot-overlay', id);
+                ov.style.position='absolute';
+                ov.style.left=(x)+'px';
+                ov.style.top=(y - 28)+'px';
+                ov.style.background='rgba(14,17,22,.85)';
+                ov.style.color='#fff';
+                ov.style.padding='6px 10px';
+                ov.style.borderRadius='8px';
+                ov.style.font='12px Segoe UI, Arial, sans-serif';
+                ov.style.zIndex='2147483647';
+                ov.style.border='1px solid #58a6ff';
+                ov.textContent = 'Campo: '+label+' • Valor: '+val+' • Estado: '+st;
+                document.body.appendChild(ov);
+                try { el.focus(); } catch(e){}
+                var prev_outline = el.style.outline; var prev_boxshadow = el.style.boxShadow;
+                el.setAttribute('data-shot-prev-outline', prev_outline||'');
+                el.setAttribute('data-shot-prev-boxshadow', prev_boxshadow||'');
+                el.style.outline='2px solid #58a6ff';
+                el.style.boxShadow='0 0 0 3px #58a6ff inset, 0 0 8px rgba(88,166,255,.7)';
+                return id;
+                """,
+                element,
+                field_label,
+                str(value),
+                state,
+            )
+        except Exception:
+            overlay_id = None
+        # Captura com anotação aplicada
+        self._pause_and_capture(f"{self._sanitize(field_label)}")
+        # Limpa overlay e restaura estilos
+        try:
+            self.driver.execute_script(
+                """
+                var el = arguments[0]; var id = arguments[1];
+                if(id){ var ov = document.querySelector('[data-shot-overlay="'+id+'"]'); if(ov) ov.remove(); }
+                var prev_outline = el.getAttribute('data-shot-prev-outline')||'';
+                var prev_boxshadow = el.getAttribute('data-shot-prev-boxshadow')||'';
+                el.style.outline = prev_outline; el.style.boxShadow = prev_boxshadow;
+                el.removeAttribute('data-shot-prev-outline'); el.removeAttribute('data-shot-prev-boxshadow');
+                """,
+                element,
+                overlay_id,
+            )
+        except Exception:
+            pass
 
     # --- Fillers ---
     def fill_name(self, first_name: str, last_name: str):
-        self.wait.until(EC.visibility_of_element_located((By.ID, "firstName"))).send_keys(first_name)
-        self.driver.find_element(By.ID, "lastName").send_keys(last_name)
-        self._pause_and_capture("fill_name")
+        first_el = self.wait.until(EC.visibility_of_element_located((By.ID, "firstName")))
+        first_el.send_keys(first_name)
+        self._annotate_and_capture(first_el, "Nome Completo (Primeiro Nome)", first_name)
+        last_el = self.driver.find_element(By.ID, "lastName")
+        last_el.send_keys(last_name)
+        self._annotate_and_capture(last_el, "Nome Completo (Sobrenome)", last_name)
 
     def fill_email(self, email: str):
-        self.driver.find_element(By.ID, "userEmail").send_keys(email)
-        self._pause_and_capture("fill_email")
+        el = self.driver.find_element(By.ID, "userEmail")
+        el.send_keys(email)
+        self._annotate_and_capture(el, "E-mail", email)
 
     def select_gender(self, gender_label: str = "Male"):
         # Usa o texto do label para maior robustez
@@ -116,11 +194,34 @@ class PracticeFormPage:
             EC.element_to_be_clickable((By.XPATH, f"//label[text()='{gender_label}']"))
         )
         label.click()
-        self._pause_and_capture(f"gender_{gender_label}")
+        self._annotate_and_capture(label, "Gênero", gender_label, state="selecionado")
 
     def fill_mobile(self, number: str):
-        self.driver.find_element(By.ID, "userNumber").send_keys(number)
-        self._pause_and_capture("fill_mobile")
+        # Aguarda elemento estar clicável e centraliza no viewport
+        try:
+            el = self.wait.until(EC.element_to_be_clickable((By.ID, "userNumber")))
+        except Exception:
+            # Tentativa de recuperação: refresh + novo wait
+            try:
+                self.driver.refresh()
+                self._wait_page_loaded(timeout_s=10.0)
+                el = self.wait.until(EC.element_to_be_clickable((By.ID, "userNumber")))
+            except Exception:
+                # Como último recurso, tenta presença simples para evitar travas
+                el = self.wait.until(EC.presence_of_element_located((By.ID, "userNumber")))
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
+        except Exception:
+            pass
+        try:
+            el.click()
+        except ElementClickInterceptedException:
+            try:
+                self.driver.execute_script("arguments[0].click();", el)
+            except Exception:
+                pass
+        el.send_keys(number)
+        self._annotate_and_capture(el, "Telefone", number)
 
     def set_birth_date(self, day: int, month_text: str, year: int):
         # Abre o datepicker
@@ -157,28 +258,41 @@ class PracticeFormPage:
             )
         )
         day_el.click()
-        self._pause_and_capture("set_birth_date")
+        # Após seleção, anotar no input de Data de Nascimento
+        try:
+            dob_input = self.driver.find_element(By.ID, "dateOfBirthInput")
+            val = f"{day} {month_text},{year}"
+            self._annotate_and_capture(dob_input, "Data de Nascimento", val)
+        except Exception:
+            self._pause_and_capture("set_birth_date")
 
     def add_subject(self, subject_text: str):
         subj = self.wait.until(EC.element_to_be_clickable((By.ID, "subjectsInput")))
         subj.send_keys(subject_text)
-        # Confirma com Enter para selecionar a opção do autocomplete
         subj.send_keys("\n")
-        self._pause_and_capture(f"add_subject_{self._sanitize(subject_text)}")
+        self._annotate_and_capture(subj, "Matéria", subject_text)
 
     def check_hobby(self, hobby_label: str = "Sports"):
-        self.wait.until(
+        label = self.wait.until(
             EC.element_to_be_clickable((By.XPATH, f"//label[text()='{hobby_label}']"))
-        ).click()
-        self._pause_and_capture(f"hobby_{self._sanitize(hobby_label)}")
+        )
+        label.click()
+        self._annotate_and_capture(label, "Hobby", hobby_label, state="selecionado")
 
     def upload_picture(self, file_path: str):
-        self.wait.until(EC.presence_of_element_located((By.ID, "uploadPicture"))).send_keys(file_path)
-        self._pause_and_capture("upload_picture")
+        el = self.wait.until(EC.presence_of_element_located((By.ID, "uploadPicture")))
+        el.send_keys(file_path)
+        try:
+            from pathlib import Path as _P
+            fname = _P(file_path).name
+        except Exception:
+            fname = file_path
+        self._annotate_and_capture(el, "Upload de Arquivo", fname, state="selecionado")
 
     def fill_address(self, address: str):
-        self.driver.find_element(By.ID, "currentAddress").send_keys(address)
-        self._pause_and_capture("fill_address")
+        el = self.driver.find_element(By.ID, "currentAddress")
+        el.send_keys(address)
+        self._annotate_and_capture(el, "Endereço", address)
 
     def select_state(self, state_text: str):
         # Abre o combo React-Select com maior robustez
@@ -208,7 +322,11 @@ class PracticeFormPage:
                 EC.element_to_be_clickable((By.XPATH, f"//div[contains(@id,'option') and text()='{state_text}']"))
             )
             option.click()
-        self._pause_and_capture(f"select_state_{self._sanitize(state_text)}")
+        try:
+            el_state = self.driver.find_element(By.ID, "state")
+            self._annotate_and_capture(el_state, "Estado", state_text, state="selecionado")
+        except Exception:
+            self._pause_and_capture(f"select_state_{self._sanitize(state_text)}")
 
     def select_city(self, city_text: str):
         city_container = self.wait.until(EC.presence_of_element_located((By.ID, "city")))
@@ -232,7 +350,11 @@ class PracticeFormPage:
                 EC.element_to_be_clickable((By.XPATH, f"//div[contains(@id,'option') and text()='{city_text}']"))
             )
             option.click()
-        self._pause_and_capture(f"select_city_{self._sanitize(city_text)}")
+        try:
+            el_city = self.driver.find_element(By.ID, "city")
+            self._annotate_and_capture(el_city, "Cidade", city_text, state="selecionado")
+        except Exception:
+            self._pause_and_capture(f"select_city_{self._sanitize(city_text)}")
 
     def submit(self):
         submit_btn = self.wait.until(EC.element_to_be_clickable((By.ID, "submit")))

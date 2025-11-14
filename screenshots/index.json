@@ -1,0 +1,155 @@
+[
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_end_20251113-214814.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_end_20251113-214814.png",
+        "section":  "end",
+        "timestamp":  "2025-11-13 21:48:14",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_00_open_20251113-214735.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_00_open_20251113-214735.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:35",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_01_Nome_Completo_(Primeiro_Nome)_20251113-214738.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_01_Nome_Completo_(Primeiro_Nome)_20251113-214738.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:38",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_02_Nome_Completo_(Sobrenome)_20251113-214740.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_02_Nome_Completo_(Sobrenome)_20251113-214740.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:40",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_03_E-mail_20251113-214743.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_03_E-mail_20251113-214743.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:43",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_04_Gênero_20251113-214745.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_04_Gênero_20251113-214745.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:46",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_05_Telefone_20251113-214748.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_05_Telefone_20251113-214748.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:48",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_06_Data_de_Nascimento_20251113-214751.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_06_Data_de_Nascimento_20251113-214751.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:51",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_07_Matéria_20251113-214753.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_07_Matéria_20251113-214753.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:54",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_08_Hobby_20251113-214756.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_08_Hobby_20251113-214756.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:56",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_09_Upload_de_Arquivo_20251113-214758.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_09_Upload_de_Arquivo_20251113-214758.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:47:58",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_10_Endereço_20251113-214801.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_10_Endereço_20251113-214801.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:48:01",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_11_Estado_20251113-214803.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_11_Estado_20251113-214803.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:48:04",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_12_Cidade_20251113-214806.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_12_Cidade_20251113-214806.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:48:06",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_13_submit_20251113-214808.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_13_submit_20251113-214808.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:48:09",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_14_submission_table_20251113-214811.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_14_submission_table_20251113-214811.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:48:11",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    },
+    {
+        "file":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_15_close_modal_20251113-214813.png",
+        "original":  "tests_test_practice_form_e2e.py_test_practice_form_submission_step_15_close_modal_20251113-214813.png",
+        "section":  "step",
+        "timestamp":  "2025-11-13 21:48:14",
+        "width":  2544,
+        "height":  956,
+        "valid":  true
+    }
+]

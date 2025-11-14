@@ -77,7 +77,9 @@ def driver(request):
             options.add_argument("--start-maximized")
         except Exception:
             pass
-    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--window-size=2560,1440")
+    options.add_argument("--force-device-scale-factor=1")
+    options.add_argument("--high-dpi-support=1")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -102,11 +104,10 @@ def driver(request):
 
     service = Service(ChromeDriverManager().install())
     # Timeout HTTP do executor via ClientConfig (evita deprecation warnings)
+    # Nota (CI): reduzir para 30s para falhar mais rápido em travas do ChromeDriver
     exec_timeout = 45
     if is_ci:
-        exec_timeout = 60
-        if is_macos or is_windows:
-            exec_timeout = 90
+        exec_timeout = 30
     if _HAS_CLIENT_CONFIG and ClientConfig is not None:
         driver = webdriver.Chrome(
             service=service,
@@ -127,6 +128,12 @@ def driver(request):
             driver.maximize_window()
         except Exception:
             pass
+
+    # Garantir resolução mínima de 1920x1080 mesmo em headless
+    try:
+        driver.set_window_size(2560, 1440)
+    except Exception:
+        pass
 
     # Configuração de delay entre etapas (segundos)
     # Prioridade: --step-delay > STEP_DELAY_MS env > STEP_DELAY_S env > padrão 0
@@ -180,7 +187,7 @@ def driver(request):
 
 @pytest.fixture(scope="session")
 def screenshots_dir() -> Path:
-    d = Path(project_root, "reports", "screenshots")
+    d = Path(project_root, "screenshots")
     d.mkdir(parents=True, exist_ok=True)
     return d
 
