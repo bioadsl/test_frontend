@@ -131,10 +131,11 @@ def driver(request):
         if is_macos:
             exec_timeout = 120
     if _HAS_CLIENT_CONFIG and ClientConfig is not None:
+        # Ajuste correto: usar request_timeout/read_timeout em ClientConfig
         driver = webdriver.Chrome(
             service=service,
             options=options,
-            client_config=ClientConfig(timeout=exec_timeout),
+            client_config=ClientConfig(request_timeout=exec_timeout, read_timeout=exec_timeout),
         )
     else:
         driver = webdriver.Chrome(service=service, options=options)
