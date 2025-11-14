@@ -101,6 +101,22 @@ def driver(request):
     chrome_path = os.environ.get("CHROME_PATH")
     if chrome_path:
         options.binary_location = chrome_path
+    else:
+        # Fallback específico para macOS: tentar localizar binário do Chrome
+        # em caminhos padrão caso CHROME_PATH não esteja definido.
+        if is_macos:
+            mac_candidates = [
+                "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta",
+                "/Applications/Chromium.app/Contents/MacOS/Chromium",
+            ]
+            for p in mac_candidates:
+                try:
+                    if os.path.exists(p):
+                        options.binary_location = p
+                        break
+                except Exception:
+                    pass
 
     service = Service(ChromeDriverManager().install())
     # Timeout HTTP do executor via ClientConfig (evita deprecation warnings)

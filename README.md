@@ -222,6 +222,24 @@ git push -u origin main
 - Caso o Chrome não esteja disponível, adapte o `conftest.py` para Edge/Firefox.
 - Em ambientes restritos, remova `--headless=new` e rode com GUI.
 
+## macOS: Configuração e Execução
+- Pré-requisitos: `python3`, opcional `Homebrew` e `Google Chrome` instalado.
+- Setup do ambiente:
+  - `scripts/macos/setup_macos.sh`
+    - Cria a venv (`.venv`), instala dependências e orienta sobre `CHROME_PATH`.
+- Execução local (headless por padrão):
+  - `scripts/macos/run_local_macos.sh`
+  - Opções:
+    - `--headed` para navegador visível
+    - `--keep-screens` para preservar screenshots
+  - Ao final, abre `reports/pytest.html` com `open` (se disponível).
+- Compatibilidade e desempenho:
+  - `scripts/macos/benchmark_macos.sh` roda 3 iterações e registra tempos em `logs/`.
+- Dicas:
+  - Se necessário, defina `CHROME_PATH` manualmente:
+    - `export CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'`
+  - Os delays `STEP_DELAY_MS` e `SCREENSHOT_DELAY_MS` são configurados nos scripts para estabilidade visual.
+
 ## Detalhes Técnicos Importantes
 
 - Datepicker: seleção robusta por dropdowns de month e year e dia dentro do mês corrente.

@@ -43,6 +43,25 @@ jobs:
             echo "Chrome binary missing"
           fi
 
+      - name: macOS CHROME_PATH fallback
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          if [ -z "${CHROME_PATH}" ]; then
+            CANDIDATES=(
+              "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+              "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta"
+              "/Applications/Chromium.app/Contents/MacOS/Chromium"
+            )
+            for p in "${CANDIDATES[@]}"; do
+              if [ -f "$p" ]; then
+                echo "CHROME_PATH fallback found: $p"
+                echo "CHROME_PATH=$p" >> "$GITHUB_ENV"
+                break
+              fi
+            done
+          fi
+
       - name: Install dependencies
         run: |
           python -m pip install -U pip
