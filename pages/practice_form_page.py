@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.webdriver.common.keys import Keys
 
 
 class PracticeFormPage:
@@ -267,9 +268,39 @@ class PracticeFormPage:
             self._pause_and_capture("set_birth_date")
 
     def add_subject(self, subject_text: str):
-        subj = self.wait.until(EC.element_to_be_clickable((By.ID, "subjectsInput")))
+        # Fecha qualquer overlay remanescente (ex.: datepicker) antes de focar
+        try:
+            self.driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+        except Exception:
+            pass
+        # Aguarda elemento clicável com recuperação em caso de travas
+        try:
+            subj = self.wait.until(EC.element_to_be_clickable((By.ID, "subjectsInput")))
+        except Exception:
+            try:
+                self.driver.refresh()
+                self._wait_page_loaded(timeout_s=10.0)
+                subj = self.wait.until(EC.element_to_be_clickable((By.ID, "subjectsInput")))
+            except Exception:
+                subj = self.wait.until(EC.presence_of_element_located((By.ID, "subjectsInput")))
+        # Centraliza e tenta clicar com fallback JS
+        try:
+            self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", subj)
+        except Exception:
+            pass
+        try:
+            subj.click()
+        except ElementClickInterceptedException:
+            try:
+                self.driver.execute_script("arguments[0].click();", subj)
+            except Exception:
+                pass
+        # Digita e confirma com ENTER
         subj.send_keys(subject_text)
-        subj.send_keys("\n")
+        try:
+            subj.send_keys(Keys.ENTER)
+        except Exception:
+            subj.send_keys("\n")
         self._annotate_and_capture(subj, "Matéria", subject_text)
 
     def check_hobby(self, hobby_label: str = "Sports"):
